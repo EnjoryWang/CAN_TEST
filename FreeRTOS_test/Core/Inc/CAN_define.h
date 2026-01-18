@@ -1,7 +1,7 @@
 #ifndef CAN_DEFINE_H
 #define CAN_DEFINE_H
 
-typedef struct
+typedef struct can_msg
 {
     uint32_t StdId;        // Standard Identifier
     uint32_t ExtId;        // Extended Identifier
