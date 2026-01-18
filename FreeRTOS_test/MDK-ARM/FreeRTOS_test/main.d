@@ -45,3 +45,9 @@ freertos_test\main.o: ../Core/Inc/dma.h
 freertos_test\main.o: ../Core/Inc/tim.h
 freertos_test\main.o: ../Core/Inc/usart.h
 freertos_test\main.o: ../Core/Inc/gpio.h
+freertos_test\main.o: ../Core/Inc/common_def.h
+freertos_test\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+freertos_test\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+freertos_test\main.o: ../Core/Inc/can_process.h
+freertos_test\main.o: ../Core/Inc/uart_process.h
+freertos_test\main.o: ../Core/Inc/led_control.h

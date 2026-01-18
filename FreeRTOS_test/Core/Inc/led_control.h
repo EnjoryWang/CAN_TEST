@@ -10,8 +10,8 @@ typedef struct
     BreathingLED_Param_t params; // 呼吸灯参数
 }LED_State_t;
 
-void LED_Init();// 初始化LED控制
-void LED_UpdatePWM(comst BreathingLed_Param_t  *params);// 更新LED的PWM设置
+void LED_Init(void);// 初始化LED控制
+void LED_UpdatePWM(const BreathingLED_Param_t  *params);// 更新LED的PWM设置
 void LED_BreathingUpdate(void);// 呼吸灯状态更新函数
 #endif /* __LED_CONTROL_H */
 
