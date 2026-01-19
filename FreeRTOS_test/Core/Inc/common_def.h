@@ -5,8 +5,16 @@
 #include"cmsis_os2.h"
 #include"string.h"
 #include"stdio.h"
+
+#define DEBUG_ENABLE 1
+#if DEBUG_ENABLE
+    #define DEBUG_PRINT(fmt, ...)    printf("DEBUG: " fmt, ##__VA_ARGS__)
+#else
+    #define DEBUG_PRINT(fmt, ...)
+#endif
 #define UART_RX_BUFFER_SIZE 256
 #define UART_TX_BUFFER_SIZE 256
+
 typedef struct 
 {
     uint32_t std_id;        // Standard Identifier

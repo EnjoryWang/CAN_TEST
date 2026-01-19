@@ -1,4 +1,5 @@
 #include "uart_process.h"
+#include "string.h"
 
 /* 串口接收缓冲区 */
 static UART_RxBuffer_t uart_rx_buffer;
@@ -21,7 +22,7 @@ void UART_Init(void)
     /* 启用串口空闲中断 */
     __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
     
-   // DEBUG_PRINT("UART Initialized with DMA\n");
+    DEBUG_PRINT("UART Initialized with DMA\n");
 }
 
 /* 串口发送响应 */

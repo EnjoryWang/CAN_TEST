@@ -18,11 +18,16 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
             can_msg.timestamp = HAL_GetTick();
             
             /* 发送到队列 */
-           /* if(osMessageQueuePut(Queue_CAN_Handle, &can_msg, 0, 0) != osOK)
+           if(osMessageQueuePut(Queue_CAN_Handle, &can_msg, 0, 0) != osOK)
             {
                 /* 队列已满，丢弃数据 */
-               /* DEBUG_PRINT("CAN Queue Full!\n");
-            }*/
+                DEBUG_PRINT("CAN Queue Full!\n");
+            }
+            else
+            {
+                /* 成功接收CAN消息 */
+                DEBUG_PRINT("CAN Msg Received: ID=0x%03X DLC=%d\n", can_msg.std_id, can_msg.dlc);
+            }
         }
     }
 }
@@ -36,7 +41,7 @@ System_Status_t CAN_CheckFrame(const CAN_Message_t *msg)
         return SYS_INVALID_PARAM;
     }
     
-    /* 检查头帧（假设协议：头帧0xAA，尾帧0x55） */
+    /* 检查头帧（头帧0xAA，尾帧0x55） */
     if(msg->data[0] != 0xAA)
     {
         return SYS_INVALID_PARAM;
@@ -48,7 +53,7 @@ System_Status_t CAN_CheckFrame(const CAN_Message_t *msg)
         return SYS_INVALID_PARAM;
     }
     
-    /* 简单的CRC检查（示例：累加和校验） */
+    /* 简单的CRC检查（效验位） */
     uint8_t checksum = 0;
     for(uint8_t i = 1; i < msg->dlc - 2; i++)
     {
@@ -69,8 +74,8 @@ BreathingLED_Param_t CAN_ExtractControlInfo(const CAN_Message_t *msg)
     BreathingLED_Param_t param;
     
     /* 从CAN数据中提取控制信息 */
-    /* 假设数据格式：[0xAA][命令][周期高][周期低][最小占空比][最大占空比][CRC][0x55] */
-    param.period_ms = (msg->data[2] << 8) | msg->data[3];
+    /* 数据格式：[0xAA][命令][周期高][周期低][最小占空比][最大占空比][CRC][0x55] */
+    param.period_ms = (msg->data[2] << 8) | msg->data[3];//从第三个数据开始，把高八位左移8位，与低八位进行或运算，得到完整的周期值
     param.min_duty = msg->data[4];
     param.max_duty = msg->data[5];
     param.update_rate_ms = 10;  /* 默认10ms更新一次 */
