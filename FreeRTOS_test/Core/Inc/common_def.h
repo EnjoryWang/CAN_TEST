@@ -53,12 +53,13 @@ typedef enum
 } System_Status_t;
 
 
-extern osMessageQueueId_t Queue_CAN_Handle;//CAN消息队列句柄
-extern osMessageQueueId_t Queue_UART_Handle;//UART消息队列句柄
+extern osMessageQueueId_t Queue_CAN_DataHandle;//CAN消息队列句柄
+extern osMessageQueueId_t Queue_UART_DataHandle;//UART消息队列句柄
+extern osMessageQueueId_t Queue_CAN_ProcessHandle;// CAN处理消息队列句柄
 
 extern osThreadId_t Task_CAN_ProcessHandle;//   CAN处理任务句柄
 extern osThreadId_t Task_UART_ProcessHandle;//  UART处理任务句柄
 extern osThreadId_t Task_BreathingLED_Handle;// 呼吸灯处理任务句柄
 
-extern osSemaphoreId_t BinarySem_LED_FreqHandle;//呼吸灯频率修改二值信号量句柄
+extern osSemaphoreId_t BinarySem_LED_Freq;//呼吸灯频率修改二值信号量句柄
 #endif /* __COMMON_DEF_H */

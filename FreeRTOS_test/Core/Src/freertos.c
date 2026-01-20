@@ -25,7 +25,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "common_def.h"
+#include "led_control.h"
+#include "can_process.h"
+#include "uart_process.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -85,6 +88,11 @@ osMessageQueueId_t Queue_UART_DataHandle;
 const osMessageQueueAttr_t Queue_UART_Data_attributes = {
   .name = "Queue_UART_Data"
 };
+/* Definitions for Queue_CAN_Process */
+osMessageQueueId_t Queue_CAN_ProcessHandle;
+const osMessageQueueAttr_t Queue_CAN_Process_attributes = {
+  .name = " Queue_CAN_Process"
+};
 /* Definitions for BinarySem_LED_Freq */
 osSemaphoreId_t BinarySem_LED_FreqHandle;
 const osSemaphoreAttr_t BinarySem_LED_Freq_attributes = {
@@ -131,10 +139,13 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* creation of Queue_CAN_Data */
-  Queue_CAN_DataHandle = osMessageQueueNew (16, sizeof(uint16_t), &Queue_CAN_Data_attributes);
+  Queue_CAN_DataHandle = osMessageQueueNew (6, sizeof(uint16_t), &Queue_CAN_Data_attributes);
 
   /* creation of Queue_UART_Data */
-  Queue_UART_DataHandle = osMessageQueueNew (16, sizeof(uint16_t), &Queue_UART_Data_attributes);
+  Queue_UART_DataHandle = osMessageQueueNew (3, sizeof(uint16_t), &Queue_UART_Data_attributes);
+
+  /* creation of Queue_CAN_Process */
+   Queue_CAN_ProcessHandle = osMessageQueueNew (6, sizeof(uint16_t), & Queue_CAN_Process_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -191,9 +202,33 @@ void StartDefaultTask(void *argument)
 void StartTask_CAN_Process(void *argument)
 {
   /* USER CODE BEGIN StartTask_CAN_Process */
+  CAN_Message_t can_msg;
+  BreathingLED_Param_t led_params;
+  DEBUG_PRINT("CAN Process Task Started.\n");
   /* Infinite loop */
   for(;;)
   {
+    if(osMessageQueueGet(Queue_CAN_DataHandle, &can_msg, NULL, osWaitForever) == osOK)
+    {
+        DEBUG_PRINT("Processing CAN Msg ID=0x%03X\n", can_msg.std_id);
+        /*?查CAN帧有效?? */
+        if(CAN_CheckFrame(&can_msg) == SYS_OK)
+        {
+            /* 提取控制信息 */
+            led_params = CAN_ExtractControlInfo(&can_msg);
+            DEBUG_PRINT("Extracted LED Params: Period=%dms MinDuty=%d%% MaxDuty=%d%%\n",
+                        led_params.period_ms, led_params.min_duty, led_params.max_duty);
+            /* 发�?�到呼吸灯任务队�? */
+            if(osMessageQueuePut(Queue_CAN_ProcessHandle, &led_params, 0, 0) != osOK)
+            {
+                DEBUG_PRINT("Breathing LED Queue Full!\n");
+            }
+        }
+        else
+        {
+            DEBUG_PRINT("Invalid CAN Frame Received!\n");
+        }
+    }
     osDelay(1);
   }
   /* USER CODE END StartTask_CAN_Process */
@@ -209,9 +244,18 @@ void StartTask_CAN_Process(void *argument)
 void StartTask_BreathingLED(void *argument)
 {
   /* USER CODE BEGIN StartTask_BreathingLED */
+  BreathingLED_Param_t led_params;
   /* Infinite loop */
   for(;;)
   {
+    if(osMessageQueueGet(Queue_CAN_ProcessHandle, &led_params, NULL, osWaitForever) == osOK)
+    {
+        DEBUG_PRINT("Processing Breathing LED Params: Period=%dms MinDuty=%d%% MaxDuty=%d%%\n",
+                    led_params.period_ms, led_params.min_duty, led_params.max_duty);
+        /* 调用呼吸灯控制函�? */
+        LED_UpdatePWM(&led_params);
+        LED_BreathingUpdate();
+    }
     osDelay(1);
   }
   /* USER CODE END StartTask_BreathingLED */
@@ -227,9 +271,21 @@ void StartTask_BreathingLED(void *argument)
 void StartTask_USART_Process(void *argument)
 {
   /* USER CODE BEGIN StartTask_USART_Process */
+    UART_Message_t uart_msg;
+    char temp_buffer[UART_TX_BUFFER_SIZE+1];
+    DEBUG_PRINT("UART Process Task Started.\n");
   /* Infinite loop */
   for(;;)
   {
+    if(osMessageQueueGet(Queue_UART_DataHandle, &uart_msg, NULL, osWaitForever) == osOK)
+    {
+        DEBUG_PRINT("Processing UART Msg Length=%d\n", uart_msg.length);
+        /* 处理UART数据，这里简单打印接收到的数�? */
+        memset(temp_buffer, 0, sizeof(temp_buffer));
+        memcpy(temp_buffer, uart_msg.buffer, uart_msg.length);
+        DEBUG_PRINT("Received Data: %s\n", temp_buffer);
+    }
+
     osDelay(1);
   }
   /* USER CODE END StartTask_USART_Process */

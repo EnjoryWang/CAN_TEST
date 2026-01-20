@@ -25,7 +25,6 @@
 #include "usart.h"
 #include "gpio.h"
 
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "common_def.h"
@@ -46,7 +45,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+extern CAN_FilterTypeDef;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -84,6 +83,19 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
+CAN_FilterTypeDef can_Filter = {0};
+
+can_Filter.FilterIdHigh = 0;
+can_Filter.FilterIdLow = 0;
+can_Filter.FilterMaskIdHigh = 0;
+can_Filter.FilterMaskIdLow = 0;
+can_Filter.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+can_Filter.FilterBank = 0;
+can_Filter.FilterMode = CAN_FILTERMODE_IDMASK;
+can_Filter.FilterScale = CAN_FILTERSCALE_32BIT;
+can_Filter.FilterActivation = CAN_FILTER_ENABLE;
+
+HAL_CAN_ConfigFilter(&hcan, &can_Filter);
 
   /* USER CODE END Init */
 
@@ -104,14 +116,12 @@ int main(void)
   LED_Init();// 初始化LED控制
   UART_Init();// 初始化UART接收
   HAL_CAN_Start(&hcan);// 启动CAN外设
-  HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING);// 激活CAN接收中断
+  HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING);// �?活CAN接收中断
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // 启动PWM输出
   /* USER CODE END 2 */
 
   /* Init scheduler */
-  osKernelInitialize();
-
-  /* Call init function for freertos objects (in cmsis_os2.c) */
+  osKernelInitialize();  /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
   /* Start scheduler */
@@ -187,7 +197,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM2) {
+  if (htim->Instance == TIM2)
+  {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
@@ -209,8 +220,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

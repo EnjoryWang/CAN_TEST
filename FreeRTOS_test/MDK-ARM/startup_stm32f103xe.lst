@@ -556,12 +556,12 @@ ARM Macro Assembler    Page 9
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=freertos_test\startup_stm32f103xe.d -ofreertos_test\startup_stm32f
-103xe.o -I../Core/Inc -I.\RTE\_FreeRTOS_test -IC:\Users\wangy\AppData\Local\Arm
-\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include -IC:\Users\wangy\AppData\Local\Arm\Pa
-cks\Keil\STM32F1xx_DFP\2.3.0\Device\Include --predefine="__EVAL SETA 1" --prede
-fine="__UVISION_VERSION SETA 534" --predefine="_RTE_ SETA 1" --predefine="STM32
-F10X_HD SETA 1" --predefine="_RTE_ SETA 1" --list=startup_stm32f103xe.lst start
-up_stm32f103xe.s
+103xe.o -I../Core/Inc -I../Drivers/CMSIS/Include -I.\RTE\_FreeRTOS_test -IC:\Us
+ers\wangy\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include -IC:\Users
+\wangy\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include --predef
+ine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 534" --predefine="_RTE_
+ SETA 1" --predefine="STM32F10X_HD SETA 1" --predefine="_RTE_ SETA 1" --list=st
+artup_stm32f103xe.lst startup_stm32f103xe.s
 
 
 

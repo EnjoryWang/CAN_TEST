@@ -1,6 +1,9 @@
 #include "uart_process.h"
+#include "usart.h"
 #include "string.h"
-
+#include "common_def.h"
+#include "FreeRTOS.h"
+#include "task.h"
 /* 串口接收缓冲区 */
 static UART_RxBuffer_t uart_rx_buffer;
 static uint8_t uart_tx_buffer[UART_TX_BUFFER_SIZE];
@@ -74,7 +77,7 @@ void USART_IDLE_Callback(UART_HandleTypeDef *huart)
                 uart_msg.timestamp = HAL_GetTick();
                 
                 /* 发送到队列 */
-                if(osMessageQueuePut(Queue_UART_Handle, &uart_msg, 0, 0) != osOK)
+                if(osMessageQueuePut(Queue_UART_DataHandle, &uart_msg, 0, 0) != osOK)
                 {
                     /* 队列已满，释放内存 */
                     vPortFree(uart_msg.buffer);

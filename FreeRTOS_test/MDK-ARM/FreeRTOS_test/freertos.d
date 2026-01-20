@@ -40,3 +40,9 @@ freertos_test\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_
 freertos_test\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 freertos_test\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 freertos_test\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
+freertos_test\freertos.o: ../Core/Inc/common_def.h
+freertos_test\freertos.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+freertos_test\freertos.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+freertos_test\freertos.o: ../Core/Inc/led_control.h
+freertos_test\freertos.o: ../Core/Inc/can_process.h
+freertos_test\freertos.o: ../Core/Inc/uart_process.h

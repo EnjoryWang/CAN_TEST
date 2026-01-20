@@ -1,4 +1,5 @@
 #include "led_control.h"
+#include "tim.h"
 static LED_State_t led_state;
 static uint32_t last_update_time = 0;
 

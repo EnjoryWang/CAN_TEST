@@ -18,7 +18,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
             can_msg.timestamp = HAL_GetTick();
             
             /* 发送到队列 */
-           if(osMessageQueuePut(Queue_CAN_Handle, &can_msg, 0, 0) != osOK)
+           if(osMessageQueuePut(Queue_CAN_DataHandle, &can_msg, 0, 0) != osOK)
             {
                 /* 队列已满，丢弃数据 */
                 DEBUG_PRINT("CAN Queue Full!\n");
